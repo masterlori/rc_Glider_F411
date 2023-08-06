@@ -1,0 +1,12 @@
+autopilot.c:38:6:autopilot_Timer	3
+autopilot.c:60:6:autopilot_InitTask	1
+autopilot.c:95:6:autopilot_Task	5
+autopilot.c:121:6:autopilot_gotoState	5
+autopilot.c:148:6:autopilot_stateIdleMain	1
+autopilot.c:156:6:autopilot_stateFullManStart	1
+autopilot.c:163:6:autopilot_stateFullManMain	12
+autopilot.c:224:6:autopilot_stateFailsafeStart	1
+autopilot.c:233:6:autopilot_stateFailsafeMain	2
+autopilot.c:244:10:cfg_NodeApVarProp	8
+autopilot.c:265:10:cfg_NodeApVarGet	4
+autopilot.c:276:10:cfg_NodeApVarSet	4

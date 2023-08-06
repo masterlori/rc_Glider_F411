@@ -1,0 +1,9 @@
+../Core/Src/motor/motor_interface.c:10:6:motor_Timer	24	static
+../Core/Src/motor/motor_interface.c:32:6:motor_InitTask	16	static
+../Core/Src/motor/motor_interface.c:64:6:motor_Task	4	static
+../Core/Src/motor/motor_interface.c:73:6:motor_setEnable	16	static
+../Core/Src/motor/motor_interface.c:95:6:motor_setTorque	32	static
+../Core/Src/motor/motor_interface.c:135:9:motor_map	24	static
+../Core/Src/motor/motor_interface.c:142:10:cfg_NodeMotorVarProp	32	static
+../Core/Src/motor/motor_interface.c:171:10:cfg_NodeMotorVarGet	16	static
+../Core/Src/motor/motor_interface.c:186:10:cfg_NodeMotorVarSet	16	static

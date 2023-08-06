@@ -1,0 +1,11 @@
+../Core/Src/servo/servo_interface.c:11:6:servo_Timer	24	static
+../Core/Src/servo/servo_interface.c:33:6:servo_InitTask	16	static
+../Core/Src/servo/servo_interface.c:79:6:servo_Task	4	static
+../Core/Src/servo/servo_interface.c:88:10:servo_angToPWM	24	static
+../Core/Src/servo/servo_interface.c:97:6:servo_setAng	24	static
+../Core/Src/servo/servo_interface.c:116:6:servo_setPercnet	40	static
+../Core/Src/servo/servo_interface.c:150:6:servo_setEnable	16	static
+../Core/Src/servo/servo_interface.c:183:9:servo_map	24	static
+../Core/Src/servo/servo_interface.c:190:10:cfg_NodeServoVarProp	32	static
+../Core/Src/servo/servo_interface.c:235:10:cfg_NodeServoVarGet	16	static
+../Core/Src/servo/servo_interface.c:258:10:cfg_NodeServoVarSet	16	static

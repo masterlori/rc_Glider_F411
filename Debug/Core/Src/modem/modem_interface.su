@@ -1,0 +1,9 @@
+../Core/Src/modem/modem_interface.c:40:6:modem_Timer	24	static
+../Core/Src/modem/modem_interface.c:62:6:modem_InitTask	8	static
+../Core/Src/modem/modem_interface.c:86:6:modem_Task	24	static
+../Core/Src/modem/modem_interface.c:212:6:modem_RcvData	24	static
+../Core/Src/modem/modem_interface.c:284:6:modem_TrmData	32	static
+../Core/Src/modem/modem_interface.c:308:10:modem_ringBufRead16b	24	static
+../Core/Src/modem/modem_interface.c:316:10:modem_ringBufRead32b	24	static
+../Core/Src/modem/modem_interface.c:326:6:modem_AddTxData	16	static
+../Core/Src/modem/modem_interface.c:341:6:modem_RemTxData	144	static

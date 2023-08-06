@@ -1,0 +1,9 @@
+rc_interface.c:21:6:rc_Timer	3
+rc_interface.c:43:6:rc_InitTask	1
+rc_interface.c:68:6:rc_Task	8
+rc_interface.c:123:6:rc_RcvData	8
+rc_interface.c:180:10:rc_ringBufRead16b	1
+rc_interface.c:189:6:rc_AddTxData	2
+rc_interface.c:205:10:cfg_NodeRcVarProp	24
+rc_interface.c:242:10:cfg_NodeRcVarGet	12
+rc_interface.c:261:10:cfg_NodeRcVarSet	6

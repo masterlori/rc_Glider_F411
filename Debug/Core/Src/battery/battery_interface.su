@@ -1,0 +1,9 @@
+../Core/Src/battery/battery_interface.c:53:6:battery_Timer	16	static
+../Core/Src/battery/battery_interface.c:73:6:battery_InitTask	16	static
+../Core/Src/battery/battery_interface.c:96:6:battery_Task	16	static
+../Core/Src/battery/battery_interface.c:138:13:battery_filterInit	24	static
+../Core/Src/battery/battery_interface.c:160:10:battery_calcPerc	40	static
+../Core/Src/battery/battery_interface.c:206:16:analog_map	24	static
+../Core/Src/battery/battery_interface.c:213:10:cfg_NodeBatVarProp	32	static
+../Core/Src/battery/battery_interface.c:236:10:cfg_NodeBatVarGet	16	static
+../Core/Src/battery/battery_interface.c:248:10:cfg_NodeBatVarSet	16	static

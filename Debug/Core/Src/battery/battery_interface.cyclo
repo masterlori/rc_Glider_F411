@@ -1,0 +1,9 @@
+battery_interface.c:53:6:battery_Timer	2
+battery_interface.c:73:6:battery_InitTask	2
+battery_interface.c:96:6:battery_Task	5
+battery_interface.c:138:13:battery_filterInit	2
+battery_interface.c:160:10:battery_calcPerc	6
+battery_interface.c:206:16:analog_map	1
+battery_interface.c:213:10:cfg_NodeBatVarProp	12
+battery_interface.c:236:10:cfg_NodeBatVarGet	6
+battery_interface.c:248:10:cfg_NodeBatVarSet	6

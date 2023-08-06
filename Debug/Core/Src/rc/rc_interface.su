@@ -1,0 +1,9 @@
+../Core/Src/rc/rc_interface.c:21:6:rc_Timer	24	static
+../Core/Src/rc/rc_interface.c:43:6:rc_InitTask	4	static
+../Core/Src/rc/rc_interface.c:68:6:rc_Task	16	static
+../Core/Src/rc/rc_interface.c:123:6:rc_RcvData	24	static
+../Core/Src/rc/rc_interface.c:180:10:rc_ringBufRead16b	24	static
+../Core/Src/rc/rc_interface.c:189:6:rc_AddTxData	16	static
+../Core/Src/rc/rc_interface.c:205:10:cfg_NodeRcVarProp	32	static
+../Core/Src/rc/rc_interface.c:242:10:cfg_NodeRcVarGet	16	static
+../Core/Src/rc/rc_interface.c:261:10:cfg_NodeRcVarSet	16	static
