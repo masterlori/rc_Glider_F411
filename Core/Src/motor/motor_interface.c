@@ -41,7 +41,7 @@ void motor_InitTask()
 	motor_info.motors[MOTOR_MAIN].min_pwm = 535;
 	motor_info.motors[MOTOR_MAIN].idle_pwm = 426;
 	motor_info.motors[MOTOR_MAIN].cur_pwm = motor_info.motors[MOTOR_MAIN].idle_pwm;
-	motor_info.motors[MOTOR_MAIN].max_pwm = 1000;
+	motor_info.motors[MOTOR_MAIN].max_pwm = 950;
 	motor_info.motors[MOTOR_MAIN].enable = 1;
 
 	//Initialize beginning state

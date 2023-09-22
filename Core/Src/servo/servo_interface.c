@@ -41,9 +41,9 @@ void servo_InitTask()
 	servo_info.servos[SERVO_ROLL].cur_ang = 0;
 	servo_info.servos[SERVO_ROLL].cur_pwm = 0;
 	servo_info.servos[SERVO_ROLL].cur_perc = 0;
-	servo_info.servos[SERVO_ROLL].min_ang = 0;
-	servo_info.servos[SERVO_ROLL].center_ang = 90;
-	servo_info.servos[SERVO_ROLL].max_ang = 180;
+	servo_info.servos[SERVO_ROLL].min_ang = 80;
+	servo_info.servos[SERVO_ROLL].center_ang = 100;
+	servo_info.servos[SERVO_ROLL].max_ang = 125;
 	servo_info.servos[SERVO_ROLL].enable = 1;
 
 	servo_info.servos[SERVO_PITCH].tim = &htim3;
@@ -51,9 +51,9 @@ void servo_InitTask()
 	servo_info.servos[SERVO_PITCH].cur_ang = 0;
 	servo_info.servos[SERVO_PITCH].cur_pwm = 0;
 	servo_info.servos[SERVO_PITCH].cur_perc = 0;
-	servo_info.servos[SERVO_PITCH].min_ang = 0;
+	servo_info.servos[SERVO_PITCH].min_ang = 45;
 	servo_info.servos[SERVO_PITCH].center_ang = 90;
-	servo_info.servos[SERVO_PITCH].max_ang = 180;
+	servo_info.servos[SERVO_PITCH].max_ang = 125;
 	servo_info.servos[SERVO_PITCH].enable = 1;
 
 	//Initialize beginning state

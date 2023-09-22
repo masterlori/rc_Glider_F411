@@ -16,6 +16,7 @@ void autopilot_stateFullManStart();
 void autopilot_stateFullManMain();
 void autopilot_stateFailsafeStart();
 void autopilot_stateFailsafeMain();
+float autopilot_expRunningAverage(float newVal);
 
 enum
 {
@@ -67,6 +68,10 @@ void autopilot_InitTask()
 	_cur_ap_state = 0xFF;
 	autopilot_info.timer[AUTOPILOT_TMR_INIT] = 500;
 	autopilot_info.armed_flag = 0;
+	autopilot_info.astart_elevator_en = 0;
+	autopilot_info.astart_motor_en = 0;
+	autopilot_info.astart_elevator_val = -80;
+	autopilot_info.astart_motor_val = 90;
 
 	autopilot_states[AP_STATE_IDLE].start_func = NULL;
 	autopilot_states[AP_STATE_IDLE].main_func = autopilot_stateIdleMain;
@@ -162,20 +167,52 @@ void autopilot_stateFullManStart()
 
 void autopilot_stateFullManMain()
 {
+	float t_trot;
+	static uint8_t astart_mot_state = 0;
+	static uint8_t astart_elev_state = 0;
+
 	if( autopilot_info.timer[AUTOPILOT_TMR_UPD] == 0 )
 	{
 		autopilot_info.timer[AUTOPILOT_TMR_UPD] = autopilot_states[_cur_ap_state].upd_period;
 		if(rc_info.connected == 1)
 		{
 			servo_setPercnet(SERVO_ROLL, rc_info.axis_r_y);
-			servo_setPercnet(SERVO_PITCH, rc_info.axis_r_x);
+
+			if( autopilot_info.astart_elevator_en == 0 ){
+				servo_setPercnet(SERVO_PITCH, rc_info.axis_r_x);
+			}
+			//Auto start
+			else
+			{
+				servo_setPercnet(SERVO_PITCH, autopilot_info.astart_elevator_val);
+				//Auto start switch off condition
+				if( abs((int)rc_info.axis_r_x) > 50 ){
+					autopilot_info.astart_elevator_en = 0;
+				}
+			}
 			//Motor
-			if( (rc_info.axis_l_x > 0) && (autopilot_info.armed_flag == 1) ){
-				motor_setTorque(MOTOR_MAIN, (uint8_t)rc_info.axis_l_x);
+			if( ((rc_info.axis_l_x > 0) || (autopilot_info.astart_motor_en == 1)) && (autopilot_info.armed_flag == 1) )
+			{
+				if( autopilot_info.astart_motor_en == 0 ){
+					t_trot = autopilot_expRunningAverage((float)rc_info.axis_l_x);
+				}
+				//Auto start
+				else
+				{
+					t_trot = autopilot_expRunningAverage((float)autopilot_info.astart_motor_val);
+					//Auto start switch off condition
+					if( abs((int)rc_info.axis_l_x) > 50 ){
+						autopilot_info.astart_motor_en = 0;
+					}
+				}
 			}
-			else{
-				motor_setTorque(MOTOR_MAIN, 0);
+			else
+			{
+				t_trot = autopilot_expRunningAverage(0.0f);
+				//motor_setTorque(MOTOR_MAIN, 0);
 			}
+			motor_setTorque(MOTOR_MAIN, (uint8_t)t_trot);
+
 		}
 		//Lost RC reception
 		else{
@@ -191,7 +228,7 @@ void autopilot_stateFullManMain()
 			//Push trot to min for 3 sec
 			if( _ap_arm_st == 0 )
 			{
-				if( rc_info.axis_l_x == -100 )
+				if( rc_info.axis_l_x < -70 )
 				{
 					autopilot_info.timer[AUTOPILOT_TMR_ARM] = 3000;
 					_ap_arm_st = 1;
@@ -199,7 +236,7 @@ void autopilot_stateFullManMain()
 			}
 			else if( _ap_arm_st == 1 )
 			{
-				if( rc_info.axis_l_x != -100 ){
+				if( rc_info.axis_l_x >= -70 ){
 					_ap_arm_st = 0;
 				}
 				else
@@ -215,7 +252,59 @@ void autopilot_stateFullManMain()
 		}
 	}
 
+	//Auto start elevator
+	if( autopilot_info.astart_elevator_en == 0 )
+	{
+		if( astart_elev_state == 0 )
+		{
+			if( rc_info.button_r == 1 )
+			{
+				autopilot_info.timer[AUTOPILOT_TMR_ASTART_ELEV] = 2000;
+				astart_elev_state = 1;
+			}
+		}
+		else if( astart_elev_state == 1 )
+		{
+			if( rc_info.button_r != 1 ){
+				astart_elev_state = 0;
+			}
+			else
+			{
+				if( autopilot_info.timer[AUTOPILOT_TMR_ASTART_ELEV] == 0 )
+				{
+					autopilot_info.astart_elevator_en = 1;
+					astart_elev_state = 0;
+				}
+			}
+		}
+	}
 
+	//Auto start motor
+	if( (autopilot_info.astart_motor_en == 0) && (autopilot_info.armed_flag == 1) )
+	{
+		if( astart_mot_state == 0 )
+		{
+			if( rc_info.button_l == 1 )
+			{
+				autopilot_info.timer[AUTOPILOT_TMR_ASTART_MOTOR] = 2000;
+				astart_mot_state = 1;
+			}
+		}
+		else if( astart_mot_state == 1 )
+		{
+			if( rc_info.button_l != 1 ){
+				astart_mot_state = 0;
+			}
+			else
+			{
+				if( autopilot_info.timer[AUTOPILOT_TMR_ASTART_MOTOR] == 0 )
+				{
+					autopilot_info.astart_motor_en = 1;
+					astart_mot_state = 0;
+				}
+			}
+		}
+	}
 
 	return;
 }
@@ -236,6 +325,20 @@ void autopilot_stateFailsafeMain()
 		autopilot_gotoState(AP_STATE_FULLMANUAL);
 	}
 	return;
+}
+
+float autopilot_expRunningAverage(float newVal)
+{
+	static float filVal = 0.0f;
+
+	if( newVal == 0.0f ){
+		filVal = 0.0f;
+	}
+	else{
+		filVal += (newVal - filVal) * TROT_FILTER_KOEF;
+	}
+
+	return filVal;
 }
 
 

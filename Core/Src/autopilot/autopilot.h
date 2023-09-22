@@ -8,11 +8,15 @@
 #ifndef SRC_AUTOPILOT_AUTOPILOT_H_
 #define SRC_AUTOPILOT_AUTOPILOT_H_
 
+#define TROT_FILTER_KOEF	0.1
+
 enum autopilot_timers
 {
 	AUTOPILOT_TMR_INIT,
 	AUTOPILOT_TMR_UPD,
 	AUTOPILOT_TMR_ARM,
+	AUTOPILOT_TMR_ASTART_MOTOR,
+	AUTOPILOT_TMR_ASTART_ELEV,
 	AUTOPILOT_TMR_NUM
 };
 
@@ -22,6 +26,10 @@ typedef struct __autopilot_infoTypeDef{
 	uint8_t armed_flag;
 	uint8_t ailerons_test;
 	uint8_t elevator_test;
+	uint8_t astart_elevator_en;
+	uint8_t astart_motor_en;
+	int8_t astart_elevator_val;
+	uint8_t astart_motor_val;
 	uint8_t error_flag;
 	uint32_t error_line;
 	uint8_t debug_enabled;
