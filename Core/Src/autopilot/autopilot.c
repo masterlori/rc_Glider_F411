@@ -341,6 +341,96 @@ float autopilot_expRunningAverage(float newVal)
 	return filVal;
 }
 
+#include <math.h>
+
+// Данные для фильтра Калмана
+typedef struct {
+    float Q_angle;  // Процессный шум
+    float Q_bias;   // Шум смещения
+    float R_measure; // Оценка шума измерений
+
+    float angle;  // Начальный угол
+    float bias;   // Начальное смещение
+
+    float rate;   // Непрофильтрованное значение скорости
+
+    float P[2][2]; // Матрица ошибки
+} Kalman;
+
+// Инициализация фильтра Калмана
+void Kalman_Init(Kalman* filter, float Q_angle, float Q_bias, float R_measure) {
+    filter->Q_angle = Q_angle;
+    filter->Q_bias = Q_bias;
+    filter->R_measure = R_measure;
+
+    filter->angle = 0;
+    filter->bias = 0;
+
+    filter->P[0][0] = 0;
+    filter->P[0][1] = 0;
+    filter->P[1][0] = 0;
+    filter->P[1][1] = 0;
+}
+
+// Обновление фильтра Калмана
+float Kalman_Update(Kalman* filter, float newAngle, float newRate, float dt) {
+    float S;
+    float K[2];
+    float y;
+
+    filter->rate = newRate - filter->bias;
+    filter->angle += dt * filter->rate;
+
+    filter->P[0][0] += dt * (dt*filter->P[1][1] - filter->P[0][1] - filter->P[1][0] + filter->Q_angle);
+    filter->P[0][1] -= dt * filter->P[1][1];
+    filter->P[1][0] -= dt * filter->P[1][1];
+    filter->P[1][1] += filter->Q_bias * dt;
+
+    S = filter->P[0][0] + filter->R_measure;
+    K[0] = filter->P[0][0] / S;
+    K[1] = filter->P[1][0] / S;
+
+    y = newAngle - filter->angle;
+    filter->angle += K[0] * y;
+    filter->bias += K[1] * y;
+
+    filter->P[0][0] -= K[0] * filter->P[0][0];
+    filter->P[0][1] -= K[0] * filter->P[0][1];
+    filter->P[1][0] -= K[1] * filter->P[0][0];
+    filter->P[1][1] -= K[1] * filter->P[0][1];
+
+    return filter->angle;
+}
+
+// Пример использования:
+int main() {
+    Kalman rollFilter, pitchFilter;
+    float ax, ay, az, gx, gy, gz;  // значения акселерометра и гироскопа
+
+    // Инициализация фильтров
+    Kalman_Init(&rollFilter, 0.001, 0.003, 0.03);
+    Kalman_Init(&pitchFilter, 0.001, 0.003, 0.03);
+
+    // Допустим, вы читаете данные из датчиков здесь...
+    // ax = ...;
+    // ay = ...;
+    // az = ...;
+    // gx = ...;
+    // gy = ...;
+    // gz = ...;
+
+    float dt = 0.01; // Временной интервал (зависит от вашей частоты считывания данных)
+
+    float roll = atan2(ay, az) * 180/M_PI;
+    float pitch = atan2(-ax, sqrt(ay * ay + az * az)) * 180/M_PI;
+
+    roll = Kalman_Update(&rollFilter, roll, gx, dt);
+    pitch = Kalman_Update(&pitchFilter, pitch, gy, dt);
+
+    // Здесь roll и pitch содержат отфильтрованные углы крена и тангажа соответственно
+    return 0;
+}
+
 
 /* Configurator node functions*/
 /*************************************************************************/

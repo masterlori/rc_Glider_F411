@@ -17,6 +17,7 @@
 #include "../autopilot/autopilot.h"
 #include "../rc/rc_interface.h"
 #include "../battery/battery_interface.h"
+#include "../sensors/sens_interface.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -45,7 +46,7 @@ uint16_t cfg_NodeFwVarProp(uint16_t varid, char *name, uint16_t *prop);
 uint16_t cfg_NodeFwVarGet(uint16_t varid, void *value);
 uint16_t cfg_NodeFwVarSet(uint16_t varid, void *value);
 
-//Settings node
+//Device node
 #define	NODE_DEV		102
 
 //Servo node
@@ -57,8 +58,11 @@ uint16_t cfg_NodeFwVarSet(uint16_t varid, void *value);
 //RC node
 #define	NODE_RC			10203
 
-//RC node
+//Battery node
 #define	NODE_BAT		10204
+
+//Sensors node
+#define	NODE_SENS		10205
 
 //Autopilot node
 #define	NODE_AUTOPILOT	103
@@ -87,6 +91,7 @@ cgf_nodeTypeDef cfg_NodeList[] =
 	{ NODE_MOTOR, NODE_DEV, MOTOR_VAR_NUM, cfg_NodeMotorVarGet, cfg_NodeMotorVarSet, cfg_NodeMotorVarProp},
 	{ NODE_RC, NODE_DEV, RC_VAR_NUM, cfg_NodeRcVarGet, cfg_NodeRcVarSet, cfg_NodeRcVarProp},
 	{ NODE_BAT, NODE_DEV, BAT_VAR_NUM, cfg_NodeBatVarGet, cfg_NodeBatVarSet, cfg_NodeBatVarProp},
+	{ NODE_SENS, NODE_DEV, SENS_VAR_NUM, cfg_NodeSensVarGet, cfg_NodeSensVarSet, cfg_NodeSensVarProp},
 	{ NODE_AUTOPILOT, NODE_MAIN, AUTOPILOT_VAR_NUM, cfg_NodeApVarGet, cfg_NodeApVarSet, cfg_NodeApVarProp}
 };
 
@@ -105,6 +110,7 @@ uint16_t cfg_GetNodeName(uint16_t nodeid, char *name)
 		case NODE_MOTOR    	: str = "Motor"; break;
 		case NODE_RC    	: str = "RC"; break;
 		case NODE_BAT    	: str = "Battery"; break;
+		case NODE_SENS    	: str = "Sensors"; break;
 		case NODE_AUTOPILOT	: str = "Autopilot"; break;
 		default:break;
 	}

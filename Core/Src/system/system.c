@@ -25,6 +25,7 @@
 #include "../rc/rc_interface.h"
 #include "../autopilot/autopilot.h"
 #include "../battery/battery_interface.h"
+#include "../sensors/sens_interface.h"
 
 
 volatile system_infoTypeDef system_info;
@@ -50,6 +51,7 @@ void system_Timer(uint32_t res)
 	rc_Timer(res);
 	battery_Timer(res);
 	autopilot_Timer(res);
+	sens_Timer(res);
 
 	for( uint8_t i = 0; i < sys_tmr_num; i++ )
 	{
@@ -74,6 +76,7 @@ void system_Init()
 	servo_InitTask();
 	motor_InitTask();
 	rc_InitTask();
+	sens_InitTask();
 	battery_InitTask(10000);
 	autopilot_InitTask();
 	cfg_InitTask();
@@ -94,6 +97,7 @@ void system_Task(void)
 	motor_Task();
 	servo_Task();
 	rc_Task();
+	sens_Task();
 	battery_Task();
 	autopilot_Task();
 
