@@ -8,22 +8,27 @@
 #ifndef SRC_SENSORS_SENS_INTERFACE_H_
 #define SRC_SENSORS_SENS_INTERFACE_H_
 
-enum autopilot_timers
+enum sens_timers
 {
-	SENS_TMR_INIT,
+	SENS_TMR_PROC,
 	SENS_TMR_NUM
 };
 
 typedef struct __sens_infoTypeDef{
 	uint32_t timer[SENS_TMR_NUM];
 	uint8_t state;
-	int32_t gyro_x;
-	int32_t gyro_y;
-	int32_t gyro_z;
-	int32_t accel_x;
-	int32_t accel_y;
-	int32_t accel_z;
-	int32_t temperature;
+	uint8_t gyro_range;
+	float gyro_x;
+	float gyro_y;
+	float gyro_z;
+	float gyro_x_bias;
+	float gyro_y_bias;
+	float gyro_z_bias;
+	uint8_t accel_range;
+	float accel_x;
+	float accel_y;
+	float accel_z;
+	float temperature;
 	uint8_t sat_num;
 	int32_t latitude;
 	int32_t longitude;

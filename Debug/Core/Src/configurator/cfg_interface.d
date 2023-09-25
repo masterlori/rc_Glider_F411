@@ -41,7 +41,8 @@ Core/Src/configurator/cfg_interface.o: \
  ../Core/Src/configurator/../motor/motor_interface.h \
  ../Core/Src/configurator/../autopilot/autopilot.h \
  ../Core/Src/configurator/../rc/rc_interface.h \
- ../Core/Src/configurator/../battery/battery_interface.h
+ ../Core/Src/configurator/../battery/battery_interface.h \
+ ../Core/Src/configurator/../sensors/sens_interface.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -86,3 +87,4 @@ Core/Src/configurator/cfg_interface.o: \
 ../Core/Src/configurator/../autopilot/autopilot.h:
 ../Core/Src/configurator/../rc/rc_interface.h:
 ../Core/Src/configurator/../battery/battery_interface.h:
+../Core/Src/configurator/../sensors/sens_interface.h:

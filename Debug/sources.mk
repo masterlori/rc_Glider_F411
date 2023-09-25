@@ -30,6 +30,7 @@ Core/Src \
 Core/Src/modem \
 Core/Src/motor \
 Core/Src/rc \
+Core/Src/sensors \
 Core/Src/servo \
 Core/Src/system \
 Core/Startup \

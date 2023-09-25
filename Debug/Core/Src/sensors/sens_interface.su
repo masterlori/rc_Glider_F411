@@ -1,0 +1,12 @@
+../Core/Src/sensors/sens_interface.c:58:6:sens_Timer	24	static
+../Core/Src/sensors/sens_interface.c:80:6:sens_InitTask	4	static
+../Core/Src/sensors/sens_interface.c:98:6:sens_Task	16	static
+../Core/Src/sensors/sens_interface.c:173:6:sens_CalibrateStep	40	static
+../Core/Src/sensors/sens_interface.c:189:6:sens_SetGyroRange	16	static
+../Core/Src/sensors/sens_interface.c:198:6:sens_SetAccelRange	16	static
+../Core/Src/sensors/sens_interface.c:207:19:sens_UpdData	48	static
+../Core/Src/sensors/sens_interface.c:268:6:sens_WriteByte	32	static
+../Core/Src/sensors/sens_interface.c:275:19:sens_Read	40	static
+../Core/Src/sensors/sens_interface.c:289:10:cfg_NodeSensVarProp	32	static
+../Core/Src/sensors/sens_interface.c:332:10:cfg_NodeSensVarGet	16	static
+../Core/Src/sensors/sens_interface.c:354:10:cfg_NodeSensVarSet	16	static

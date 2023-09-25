@@ -5,7 +5,9 @@
 #include "../rc/rc_interface.h"
 #include "../motor/motor_interface.h"
 #include "../servo/servo_interface.h"
+#include "../sensors/sens_interface.h"
 #include "../crc/crc.h"
+#include <math.h>
 
 volatile autopilot_infoTypeDef autopilot_info;
 uint8_t _ap_arm_st = 0;
@@ -340,7 +342,7 @@ float autopilot_expRunningAverage(float newVal)
 
 	return filVal;
 }
-
+/*
 #include <math.h>
 
 // Данные для фильтра Калмана
@@ -431,7 +433,7 @@ int main() {
     return 0;
 }
 
-
+*/
 /* Configurator node functions*/
 /*************************************************************************/
 uint16_t cfg_NodeApVarProp(uint16_t varid, char *name, uint16_t *prop)

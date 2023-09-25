@@ -1,6 +1,5 @@
-Core/Src/system/system.o: ../Core/Src/system/system.c \
- ../Core/Src/system/system.h ../Core/Inc/../inc/main.h \
- ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
+Core/Src/sensors/sens_interface.o: ../Core/Src/sensors/sens_interface.c \
+ ../Core/Inc/main.h ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h \
@@ -33,17 +32,9 @@ Core/Src/system/system.o: ../Core/Src/system/system.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h \
- ../Core/Inc/main.h ../Core/Src/system/../../config.h \
- ../Core/Src/system/../modem/modem_interface.h \
- ../Core/Src/system/../configurator/cfg_interface.h \
- ../Core/Src/system/../motor/motor_interface.h \
- ../Core/Src/system/../servo/servo_interface.h \
- ../Core/Src/system/../rc/rc_interface.h \
- ../Core/Src/system/../autopilot/autopilot.h \
- ../Core/Src/system/../battery/battery_interface.h \
- ../Core/Src/system/../sensors/sens_interface.h
-../Core/Src/system/system.h:
-../Core/Inc/../inc/main.h:
+ ../Core/Src/sensors/sens_interface.h \
+ ../Core/Src/sensors/../configurator/cfg_interface.h
+../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h:
@@ -77,13 +68,5 @@ Core/Src/system/system.o: ../Core/Src/system/system.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h:
-../Core/Inc/main.h:
-../Core/Src/system/../../config.h:
-../Core/Src/system/../modem/modem_interface.h:
-../Core/Src/system/../configurator/cfg_interface.h:
-../Core/Src/system/../motor/motor_interface.h:
-../Core/Src/system/../servo/servo_interface.h:
-../Core/Src/system/../rc/rc_interface.h:
-../Core/Src/system/../autopilot/autopilot.h:
-../Core/Src/system/../battery/battery_interface.h:
-../Core/Src/system/../sensors/sens_interface.h:
+../Core/Src/sensors/sens_interface.h:
+../Core/Src/sensors/../configurator/cfg_interface.h:

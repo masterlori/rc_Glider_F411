@@ -37,6 +37,7 @@ Core/Src/autopilot/autopilot.o: ../Core/Src/autopilot/autopilot.c \
  ../Core/Src/autopilot/../rc/rc_interface.h \
  ../Core/Src/autopilot/../motor/motor_interface.h \
  ../Core/Src/autopilot/../servo/servo_interface.h \
+ ../Core/Src/autopilot/../sensors/sens_interface.h \
  ../Core/Src/autopilot/../crc/crc.h ../Core/Inc/../inc/main.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
@@ -77,5 +78,6 @@ Core/Src/autopilot/autopilot.o: ../Core/Src/autopilot/autopilot.c \
 ../Core/Src/autopilot/../rc/rc_interface.h:
 ../Core/Src/autopilot/../motor/motor_interface.h:
 ../Core/Src/autopilot/../servo/servo_interface.h:
+../Core/Src/autopilot/../sensors/sens_interface.h:
 ../Core/Src/autopilot/../crc/crc.h:
 ../Core/Inc/../inc/main.h:

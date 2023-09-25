@@ -12,6 +12,7 @@
 "./Core/Src/modem/modem_interface.o"
 "./Core/Src/motor/motor_interface.o"
 "./Core/Src/rc/rc_interface.o"
+"./Core/Src/sensors/sens_interface.o"
 "./Core/Src/servo/servo_interface.o"
 "./Core/Src/system/system.o"
 "./Core/Startup/startup_stm32f411ceux.o"

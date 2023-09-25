@@ -98,6 +98,8 @@ extern UART_HandleTypeDef huart2;
 #define HAL_GNSS_UART	huart2
 extern TIM_HandleTypeDef htim3;
 extern ADC_HandleTypeDef hadc1;
+extern I2C_HandleTypeDef hi2c1;
+#define HAL_MEMS_I2C	hi2c1
 
 //static void MX_USART1_UART_Init(void);
 extern void MX_UARTReInit();
