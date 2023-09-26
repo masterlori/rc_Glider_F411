@@ -67,6 +67,10 @@ void Error_Handler(void);
 #define GNSS_TX_GPIO_Port GPIOA
 #define GNSS_RX_Pin GPIO_PIN_3
 #define GNSS_RX_GPIO_Port GPIOA
+#define MODEM_M0_Pin GPIO_PIN_5
+#define MODEM_M0_GPIO_Port GPIOA
+#define MODEM_AUX_Pin GPIO_PIN_6
+#define MODEM_AUX_GPIO_Port GPIOA
 #define PWM_MOTOR_Pin GPIO_PIN_0
 #define PWM_MOTOR_GPIO_Port GPIOB
 #define MODEM_LED_Pin GPIO_PIN_14
@@ -75,10 +79,6 @@ void Error_Handler(void);
 #define MODEM_TX_GPIO_Port GPIOA
 #define MODEM_RX_Pin GPIO_PIN_10
 #define MODEM_RX_GPIO_Port GPIOA
-#define MODEM_AUX_Pin GPIO_PIN_11
-#define MODEM_AUX_GPIO_Port GPIOA
-#define MODEM_M0_Pin GPIO_PIN_12
-#define MODEM_M0_GPIO_Port GPIOA
 #define MODEM_M1_Pin GPIO_PIN_15
 #define MODEM_M1_GPIO_Port GPIOA
 #define PWM_ROLL_Pin GPIO_PIN_4

@@ -7,6 +7,7 @@
 #include "../servo/servo_interface.h"
 #include "../sensors/sens_interface.h"
 #include "../crc/crc.h"
+#include "usbd_cdc_if.h"
 #include <math.h>
 
 volatile autopilot_infoTypeDef autopilot_info;
@@ -162,7 +163,8 @@ void autopilot_stateIdleMain()
 /*Full manual control*/
 void autopilot_stateFullManStart()
 {
-
+	uint8_t data[] = "Hello from STM32!\r\n";
+	CDC_Transmit_FS(data, sizeof(data));
 
 	return;
 }
