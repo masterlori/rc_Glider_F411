@@ -18,6 +18,7 @@
 #include "../rc/rc_interface.h"
 #include "../battery/battery_interface.h"
 #include "../sensors/sens_interface.h"
+#include "usbd_cdc_if.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -254,6 +255,7 @@ uint16_t cfg_NodeMainVarSet(uint16_t varid, void *value)
 /*************************************************************************/
 
 void cfg_TxDataCh0(uint8_t *data, uint32_t len);
+void cfg_TxDataCh1USB(uint8_t *data, uint32_t len);
 
 /**
   * @brief  called from SysTick_Handler to update local class time
@@ -303,6 +305,7 @@ void cfg_InitTask()
 	}
 
 	cfg_info.iface[CFG_IFACE_CH0].tx_func = cfg_TxDataCh0;
+	cfg_info.iface[CFG_IFACE_CH1_USB].tx_func = cfg_TxDataCh1USB;
 
 	cfg_LoadSettings();
 
@@ -783,6 +786,19 @@ void cfg_TxDataCh0(uint8_t *data, uint32_t len)
 #endif //NO_CFG
 
 	modem_TrmData(SYSTEM_CFG_MODEM_CH, data, len);
+	//HAL_UART_Transmit(&HAL_CFG_UART, data, len, HAL_MAX_DELAY);
+
+	return;
+}
+
+void cfg_TxDataCh1USB(uint8_t *data, uint32_t len)
+{
+#ifdef NO_CFG
+	return;
+#endif //NO_CFG
+
+	CDC_Transmit_FS(data, (uint16_t)len);
+	//modem_TrmData(SYSTEM_CFG_MODEM_CH, data, len);
 	//HAL_UART_Transmit(&HAL_CFG_UART, data, len, HAL_MAX_DELAY);
 
 	return;

@@ -164,7 +164,7 @@ void autopilot_stateIdleMain()
 void autopilot_stateFullManStart()
 {
 	uint8_t data[] = "Hello from STM32!\r\n";
-	CDC_Transmit_FS(data, sizeof(data));
+	//CDC_Transmit_FS(data, sizeof(data));
 
 	return;
 }

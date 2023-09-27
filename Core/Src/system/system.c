@@ -26,6 +26,7 @@
 #include "../autopilot/autopilot.h"
 #include "../battery/battery_interface.h"
 #include "../sensors/sens_interface.h"
+#include "usbd_cdc_if.h"
 
 
 volatile system_infoTypeDef system_info;
@@ -80,6 +81,7 @@ void system_Init()
 	battery_InitTask(10000);
 	autopilot_InitTask();
 	cfg_InitTask();
+	system_info.usb_rx_flag = 0;
 	HAL_UART_Receive_IT(&HAL_MODEM_UART, (uint8_t*)&cfg_uart_rx_data, 1);
 	HAL_ADC_Start_IT(&hadc1);
 }
@@ -91,6 +93,8 @@ void system_Init()
   */
 void system_Task(void)
 {
+	uint32_t i;
+
 	//leds_Task();
 	cfg_Task();
 	modem_Task();
@@ -117,6 +121,15 @@ void system_Task(void)
 			_system_restart_uart = 1;
 			//system_ErrorHandler();
 		}
+	}
+
+	//USB Rx
+	if( system_info.usb_rx_flag == 1 )
+	{
+		for( i = 0; i < system_info.usb_rx_len; i++ ){
+			cfg_RcvData(CFG_IFACE_CH1_USB, system_info.usb_rx_buf[i]);
+		}
+		system_info.usb_rx_flag = 0;
 	}
 
 	//System reset

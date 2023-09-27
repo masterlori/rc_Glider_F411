@@ -1,4 +1,4 @@
-crc.c:44:9:crc8_calc	2
-crc.c:95:10:crc16_calc	2
-crc.c:104:10:crc16_RingBuf	2
-crc.c:192:10:crc32_calc	2
+../Core/Src/crc/crc.c:44:9:crc8_calc	2
+../Core/Src/crc/crc.c:95:10:crc16_calc	2
+../Core/Src/crc/crc.c:104:10:crc16_RingBuf	2
+../Core/Src/crc/crc.c:192:10:crc32_calc	2

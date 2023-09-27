@@ -14,8 +14,8 @@
 #define SRC_CONFIGURATOR_CFG_INTERFACE_H_
 
 #define CFG_HEADER 		0xCEFA
-#define CFG_MAX_TX_LEN 	10
-#define CFG_TX_PERIOD 	10
+#define CFG_MAX_TX_LEN 	64
+#define CFG_TX_PERIOD 	0
 #define CFG_FW_VAR_NUM 	48
 #define CFG_BUF_SIZE 	256
 #define CFG_BUF_MASK (CFG_BUF_SIZE - 1)
@@ -112,6 +112,7 @@ extern cgf_nodeTypeDef* cfg_GetNode(uint16_t nodeid);
 enum cfg_ifaces
 {
 	CFG_IFACE_CH0,
+	CFG_IFACE_CH1_USB,
 	CFG_IFACE_NUM
 };
 

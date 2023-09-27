@@ -37,6 +37,9 @@ typedef struct __system_infoTypeDef{
 	systemstate_TypeDef state;
 	uint8_t reset_req;
 	uint8_t adc_cplt;
+	uint8_t usb_rx_buf[64];
+	uint8_t usb_rx_flag;
+	uint32_t usb_rx_len;
 	uint32_t timer[sys_tmr_num];
 }system_infoTypeDef;
 
