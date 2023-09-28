@@ -21,9 +21,9 @@ typedef struct __sens_infoTypeDef{
 	float gyro_x;
 	float gyro_y;
 	float gyro_z;
-	float gyro_x_bias;
-	float gyro_y_bias;
-	float gyro_z_bias;
+	int32_t gyro_x_bias;
+	int32_t gyro_y_bias;
+	int32_t gyro_z_bias;
 	uint8_t accel_range;
 	float accel_x;
 	float accel_y;

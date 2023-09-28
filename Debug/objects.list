@@ -2,6 +2,7 @@
 "./Core/Src/battery/battery_interface.o"
 "./Core/Src/configurator/cfg_interface.o"
 "./Core/Src/crc/crc.o"
+"./Core/Src/leds/leds_interface.o"
 "./Core/Src/main.o"
 "./Core/Src/stm32f4xx_hal_msp.o"
 "./Core/Src/stm32f4xx_hal_timebase_tim.o"

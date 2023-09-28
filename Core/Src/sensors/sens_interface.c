@@ -8,6 +8,7 @@
 #include "main.h"
 #include "sens_interface.h"
 #include "../configurator/cfg_interface.h"
+#include "../leds/leds_interface.h"
 #include <math.h>
 
 //MPU6050
@@ -101,14 +102,15 @@ void sens_Task(void)
 	return;
 #endif //NO_SENS
 
-	uint16_t t_cal_step = 0;
+	static uint16_t t_cal_step = 0;
 
 	//Reset
 	if( sens_info.state == 0 )
 	{
 		sens_WriteByte(SENS_REG_PWR_MGMT_1, 0x80);
-		sens_info.timer[SENS_TMR_PROC] = 100;
+		sens_info.timer[SENS_TMR_PROC] = 5000;
 		sens_info.state = 1;
+		leds_setBlink(LED_SIM_BLUE, 50, 1000, 0, 0, 1);
 	}
 	//Init
 	else if( sens_info.state == 1 )
@@ -129,6 +131,7 @@ void sens_Task(void)
 			sens_info.gyro_y_bias = 0.0;
 			sens_info.gyro_z_bias = 0.0;
 			sens_info.state = 2;
+			leds_setBlink(LED_SIM_BLUE, 50, 500, 0, 0, 1);
 		}
 	}
 	//Calibration
@@ -147,13 +150,14 @@ void sens_Task(void)
 		//Calculating bias
 		else
 		{
-			sens_info.gyro_x_bias /= (float)SENS_CAL_STEP_NUM;
-			sens_info.gyro_x_bias /= (float)SENS_CAL_STEP_NUM;
-			sens_info.gyro_x_bias /= (float)SENS_CAL_STEP_NUM;
+			sens_info.gyro_x_bias /= SENS_CAL_STEP_NUM;
+			sens_info.gyro_y_bias /= SENS_CAL_STEP_NUM;
+			sens_info.gyro_z_bias /= SENS_CAL_STEP_NUM;
 			sens_info.timer[SENS_TMR_PROC] = 1;
-			//sens_SetGyroRange(GYRO_RANGE_2000DPS);
-			//sens_SetAccelRange(ACCEL_RANGE_8G);
+			//sens_SetGyroRange(GYRO_RANGE_1000DPS);
+			sens_SetAccelRange(ACCEL_RANGE_8G);
 			sens_info.state = 3;
+			leds_setBlink(LED_SIM_BLUE, 50, 100, 0, 0, 1);
 		}
 	}
 	//Ready
@@ -254,13 +258,13 @@ HAL_StatusTypeDef sens_UpdData()
             break;
     }
 
-    sens_info.accel_x = raw_accel_x / accel_sens; // g
-    sens_info.accel_y = raw_accel_y / accel_sens; // g
-    sens_info.accel_z = raw_accel_z / accel_sens; // g
-    sens_info.gyro_x = raw_gyro_x / gyro_sens; // °/s
-    sens_info.gyro_y = raw_gyro_y / gyro_sens; // °/s
-    sens_info.gyro_z = raw_gyro_z / gyro_sens; // °/s
-    sens_info.temperature = (raw_temp / 340.0) + 36.53; // °C
+    sens_info.accel_x = (float)raw_accel_x / accel_sens; // g
+    sens_info.accel_y = (float)raw_accel_y / accel_sens; // g
+    sens_info.accel_z = (float)raw_accel_z / accel_sens; // g
+    sens_info.gyro_x = ((float)raw_gyro_x / gyro_sens) - ((float)sens_info.gyro_x_bias  / gyro_sens); // °/s
+    sens_info.gyro_y = ((float)raw_gyro_y / gyro_sens) - ((float)sens_info.gyro_y_bias  / gyro_sens); // °/s
+    sens_info.gyro_z = ((float)raw_gyro_z / gyro_sens) - ((float)sens_info.gyro_z_bias  / gyro_sens); // °/s
+    sens_info.temperature = ((float)raw_temp / 340.0) + 36.53; // °C
 
     return HAL_OK;
 }

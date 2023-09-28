@@ -36,7 +36,8 @@ Core/Src/sensors/sens_interface.o: ../Core/Src/sensors/sens_interface.c \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_usb.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h \
  ../Core/Src/sensors/sens_interface.h \
- ../Core/Src/sensors/../configurator/cfg_interface.h
+ ../Core/Src/sensors/../configurator/cfg_interface.h \
+ ../Core/Src/sensors/../leds/leds_interface.h ../Core/Inc/../inc/main.h
 ../Core/Inc/main.h:
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 ../Core/Inc/stm32f4xx_hal_conf.h:
@@ -76,3 +77,5 @@ Core/Src/sensors/sens_interface.o: ../Core/Src/sensors/sens_interface.c \
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pcd_ex.h:
 ../Core/Src/sensors/sens_interface.h:
 ../Core/Src/sensors/../configurator/cfg_interface.h:
+../Core/Src/sensors/../leds/leds_interface.h:
+../Core/Inc/../inc/main.h:

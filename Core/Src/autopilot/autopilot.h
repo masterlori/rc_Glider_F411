@@ -14,6 +14,7 @@ enum autopilot_timers
 {
 	AUTOPILOT_TMR_INIT,
 	AUTOPILOT_TMR_UPD,
+	AUTOPILOT_TMR_ANG_UPD,
 	AUTOPILOT_TMR_ARM,
 	AUTOPILOT_TMR_ASTART_MOTOR,
 	AUTOPILOT_TMR_ASTART_ELEV,
@@ -30,10 +31,25 @@ typedef struct __autopilot_infoTypeDef{
 	uint8_t astart_motor_en;
 	int8_t astart_elevator_val;
 	uint8_t astart_motor_val;
+	float roll;
+	float pitch;
 	uint8_t error_flag;
 	uint32_t error_line;
 	uint8_t debug_enabled;
 }autopilot_infoTypeDef;
+
+typedef struct {
+    float Q_angle;  // Процессный шум
+    float Q_bias;   // Шум смещения
+    float R_measure; // Оценка шума измерений
+
+    float angle;  // Начальный угол
+    float bias;   // Начальное смещение
+
+    float rate;   // Непрофильтрованное значение скорости
+
+    float P[2][2]; // Матрица ошибки
+} kalman_TypeDef;
 
 extern volatile autopilot_infoTypeDef autopilot_info;
 extern void autopilot_Timer(uint32_t res);
@@ -45,6 +61,8 @@ enum
 {
 	AUTOPILOT_STATE,
 	AUTOPILOT_ARMED,
+	AUTOPILOT_ROLL,
+	AUTOPILOT_PITCH,
 	AUTOPILOT_VAR_NUM,
 };
 

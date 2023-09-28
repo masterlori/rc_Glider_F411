@@ -142,7 +142,7 @@ void modem_Task(void)
 			_modem_cur_state = modem_init_wait_rdy;
 		}
 	}
-	else if( _modem_cur_state == modem_init_wait_rdy  )
+	else if( _modem_cur_state == modem_init_wait_rdy )
 	{
 		if( modem_info.timer[MODEM_STATE_TMR] == 0 ){
 			_modem_cur_state = modem_ready;

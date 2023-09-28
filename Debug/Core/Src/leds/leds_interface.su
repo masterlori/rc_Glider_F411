@@ -1,0 +1,9 @@
+../Core/Src/leds/leds_interface.c:39:6:leds_Timer	24	static
+../Core/Src/leds/leds_interface.c:60:9:leds_InitTask	16	static
+../Core/Src/leds/leds_interface.c:146:6:leds_Task	32	static
+../Core/Src/leds/leds_interface.c:488:9:leds_setOn	16	static
+../Core/Src/leds/leds_interface.c:539:9:leds_setOff	16	static
+../Core/Src/leds/leds_interface.c:592:9:leds_setPwm	16	static
+../Core/Src/leds/leds_interface.c:655:9:leds_setBlink	24	static
+../Core/Src/leds/leds_interface.c:741:9:leds_setFade	24	static
+../Core/Src/leds/leds_interface.c:818:9:leds_setFadeBlink	24	static

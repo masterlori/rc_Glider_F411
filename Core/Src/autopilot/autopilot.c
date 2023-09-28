@@ -11,20 +11,28 @@
 #include <math.h>
 
 volatile autopilot_infoTypeDef autopilot_info;
+kalman_TypeDef _roll_filter, _pitch_filter;
+
 uint8_t _ap_arm_st = 0;
 
 void autopilot_gotoState(uint8_t new_state);
 void autopilot_stateIdleMain();
 void autopilot_stateFullManStart();
 void autopilot_stateFullManMain();
+void autopilot_stateStabStart();
+void autopilot_stateStabMain();
 void autopilot_stateFailsafeStart();
 void autopilot_stateFailsafeMain();
 float autopilot_expRunningAverage(float newVal);
+void autopilot_UpdAngles();
+void autopilot_KalmanInit(kalman_TypeDef* filter, float Q_angle, float Q_bias, float R_measure);
+float autopilot_KalmanUpd(kalman_TypeDef* filter, float newAngle, float newRate, float dt);
 
 enum
 {
 	AP_STATE_IDLE,
 	AP_STATE_FULLMANUAL,
+	AP_STATE_STAB,
 	AP_STATE_FAILSAFE,
 	AP_SATES_NUM,
 };
@@ -86,10 +94,18 @@ void autopilot_InitTask()
 	autopilot_states[AP_STATE_FULLMANUAL].end_func = NULL;
 	autopilot_states[AP_STATE_FULLMANUAL].upd_period = 10;
 
+	autopilot_states[AP_STATE_STAB].start_func = autopilot_stateStabStart;
+	autopilot_states[AP_STATE_STAB].main_func = autopilot_stateStabMain;
+	autopilot_states[AP_STATE_STAB].end_func = NULL;
+	autopilot_states[AP_STATE_STAB].upd_period = 10;
+
 	autopilot_states[AP_STATE_FAILSAFE].start_func = autopilot_stateFailsafeStart;
 	autopilot_states[AP_STATE_FAILSAFE].main_func = autopilot_stateFailsafeMain;
 	autopilot_states[AP_STATE_FAILSAFE].end_func = NULL;
 	autopilot_states[AP_STATE_FAILSAFE].upd_period = 0;
+
+	autopilot_KalmanInit(&_roll_filter, 0.001, 0.003, 0.03);
+	autopilot_KalmanInit(&_pitch_filter, 0.001, 0.003, 0.03);
 
 	return;
 }
@@ -117,6 +133,11 @@ void autopilot_Task(void)
 		}
 	}
 
+	if( autopilot_info.timer[AUTOPILOT_TMR_ANG_UPD] == 0 )
+	{
+		autopilot_info.timer[AUTOPILOT_TMR_ANG_UPD] = 10;
+		autopilot_UpdAngles();
+	}
 
 	return;
 }
@@ -163,9 +184,6 @@ void autopilot_stateIdleMain()
 /*Full manual control*/
 void autopilot_stateFullManStart()
 {
-	uint8_t data[] = "Hello from STM32!\r\n";
-	//CDC_Transmit_FS(data, sizeof(data));
-
 	return;
 }
 
@@ -313,6 +331,17 @@ void autopilot_stateFullManMain()
 	return;
 }
 
+/*Stabilize state*/
+void autopilot_stateStabStart()
+{
+	return;
+}
+
+void autopilot_stateStabMain()
+{
+	return;
+}
+
 /*Failsafe state*/
 void autopilot_stateFailsafeStart()
 {
@@ -331,6 +360,71 @@ void autopilot_stateFailsafeMain()
 	return;
 }
 
+//Kalman filter init
+void autopilot_KalmanInit(kalman_TypeDef* filter, float Q_angle, float Q_bias, float R_measure)
+{
+	filter->Q_angle = Q_angle;
+	filter->Q_bias = Q_bias;
+	filter->R_measure = R_measure;
+
+	filter->angle = 0;
+	filter->bias = 0;
+
+	filter->P[0][0] = 0;
+	filter->P[0][1] = 0;
+	filter->P[1][0] = 0;
+	filter->P[1][1] = 0;
+
+	return;
+}
+
+//Kalman filter update
+float autopilot_KalmanUpd(kalman_TypeDef* filter, float newAngle, float newRate, float dt)
+{
+	float S;
+	float K[2];
+	float y;
+
+	filter->rate = newRate - filter->bias;
+	filter->angle += dt * filter->rate;
+
+	filter->P[0][0] += dt * (dt*filter->P[1][1] - filter->P[0][1] - filter->P[1][0] + filter->Q_angle);
+	filter->P[0][1] -= dt * filter->P[1][1];
+	filter->P[1][0] -= dt * filter->P[1][1];
+	filter->P[1][1] += filter->Q_bias * dt;
+
+	S = filter->P[0][0] + filter->R_measure;
+	K[0] = filter->P[0][0] / S;
+	K[1] = filter->P[1][0] / S;
+
+	y = newAngle - filter->angle;
+	filter->angle += K[0] * y;
+	filter->bias += K[1] * y;
+
+	filter->P[0][0] -= K[0] * filter->P[0][0];
+	filter->P[0][1] -= K[0] * filter->P[0][1];
+	filter->P[1][0] -= K[1] * filter->P[0][0];
+	filter->P[1][1] -= K[1] * filter->P[0][1];
+
+	return filter->angle;
+}
+
+//Update Pitch Roll angles
+void autopilot_UpdAngles()
+{
+	if( sens_info.state == 3 )
+	{
+		float dt = 0.01;
+
+		float roll = atan2(sens_info.accel_y, sens_info.accel_z) * 180/M_PI;
+		float pitch = atan2(-sens_info.accel_x, sqrt(sens_info.accel_y * sens_info.accel_y + sens_info.accel_z * sens_info.accel_z)) * 180/M_PI;
+
+		autopilot_info.roll = autopilot_KalmanUpd(&_roll_filter, roll, sens_info.gyro_x, dt);
+		autopilot_info.pitch = autopilot_KalmanUpd(&_pitch_filter, pitch, sens_info.gyro_y, dt);
+	}
+	return;
+}
+
 float autopilot_expRunningAverage(float newVal)
 {
 	static float filVal = 0.0f;
@@ -344,98 +438,7 @@ float autopilot_expRunningAverage(float newVal)
 
 	return filVal;
 }
-/*
-#include <math.h>
 
-// Данные для фильтра Калмана
-typedef struct {
-    float Q_angle;  // Процессный шум
-    float Q_bias;   // Шум смещения
-    float R_measure; // Оценка шума измерений
-
-    float angle;  // Начальный угол
-    float bias;   // Начальное смещение
-
-    float rate;   // Непрофильтрованное значение скорости
-
-    float P[2][2]; // Матрица ошибки
-} Kalman;
-
-// Инициализация фильтра Калмана
-void Kalman_Init(Kalman* filter, float Q_angle, float Q_bias, float R_measure) {
-    filter->Q_angle = Q_angle;
-    filter->Q_bias = Q_bias;
-    filter->R_measure = R_measure;
-
-    filter->angle = 0;
-    filter->bias = 0;
-
-    filter->P[0][0] = 0;
-    filter->P[0][1] = 0;
-    filter->P[1][0] = 0;
-    filter->P[1][1] = 0;
-}
-
-// Обновление фильтра Калмана
-float Kalman_Update(Kalman* filter, float newAngle, float newRate, float dt) {
-    float S;
-    float K[2];
-    float y;
-
-    filter->rate = newRate - filter->bias;
-    filter->angle += dt * filter->rate;
-
-    filter->P[0][0] += dt * (dt*filter->P[1][1] - filter->P[0][1] - filter->P[1][0] + filter->Q_angle);
-    filter->P[0][1] -= dt * filter->P[1][1];
-    filter->P[1][0] -= dt * filter->P[1][1];
-    filter->P[1][1] += filter->Q_bias * dt;
-
-    S = filter->P[0][0] + filter->R_measure;
-    K[0] = filter->P[0][0] / S;
-    K[1] = filter->P[1][0] / S;
-
-    y = newAngle - filter->angle;
-    filter->angle += K[0] * y;
-    filter->bias += K[1] * y;
-
-    filter->P[0][0] -= K[0] * filter->P[0][0];
-    filter->P[0][1] -= K[0] * filter->P[0][1];
-    filter->P[1][0] -= K[1] * filter->P[0][0];
-    filter->P[1][1] -= K[1] * filter->P[0][1];
-
-    return filter->angle;
-}
-
-// Пример использования:
-int main() {
-    Kalman rollFilter, pitchFilter;
-    float ax, ay, az, gx, gy, gz;  // значения акселерометра и гироскопа
-
-    // Инициализация фильтров
-    Kalman_Init(&rollFilter, 0.001, 0.003, 0.03);
-    Kalman_Init(&pitchFilter, 0.001, 0.003, 0.03);
-
-    // Допустим, вы читаете данные из датчиков здесь...
-    // ax = ...;
-    // ay = ...;
-    // az = ...;
-    // gx = ...;
-    // gy = ...;
-    // gz = ...;
-
-    float dt = 0.01; // Временной интервал (зависит от вашей частоты считывания данных)
-
-    float roll = atan2(ay, az) * 180/M_PI;
-    float pitch = atan2(-ax, sqrt(ay * ay + az * az)) * 180/M_PI;
-
-    roll = Kalman_Update(&rollFilter, roll, gx, dt);
-    pitch = Kalman_Update(&pitchFilter, pitch, gy, dt);
-
-    // Здесь roll и pitch содержат отфильтрованные углы крена и тангажа соответственно
-    return 0;
-}
-
-*/
 /* Configurator node functions*/
 /*************************************************************************/
 uint16_t cfg_NodeApVarProp(uint16_t varid, char *name, uint16_t *prop)
@@ -446,6 +449,8 @@ uint16_t cfg_NodeApVarProp(uint16_t varid, char *name, uint16_t *prop)
 	{
 		case AUTOPILOT_STATE:	str = "State"; break;
 		case AUTOPILOT_ARMED:	str = "Armed"; break;
+		case AUTOPILOT_ROLL:	str = "Roll"; break;
+		case AUTOPILOT_PITCH:	str = "Pitch"; break;
 		default: return CFG_ERROR_VARID;
 	}
 	if( name ) { while( *str ) *name++ = *str++; *name = 0; }
@@ -454,6 +459,8 @@ uint16_t cfg_NodeApVarProp(uint16_t varid, char *name, uint16_t *prop)
 	{
 		case AUTOPILOT_STATE:		*prop = CFG_VAR_TYPE_UINT; break;
 		case AUTOPILOT_ARMED:		*prop = CFG_VAR_TYPE_BOOL; break;
+		case AUTOPILOT_ROLL:		*prop = CFG_VAR_TYPE_REAL | CFG_VAR_PROP_READONLY; break;
+		case AUTOPILOT_PITCH:		*prop = CFG_VAR_TYPE_REAL | CFG_VAR_PROP_READONLY; break;
 		default: return CFG_ERROR_VARID;
 	}
 	return CFG_ERROR_NONE;
@@ -465,6 +472,8 @@ uint16_t cfg_NodeApVarGet(uint16_t varid, void *value)
 	{
 		case AUTOPILOT_STATE:		*(uint32_t*)value = (uint32_t)autopilot_info.state; break;
 		case AUTOPILOT_ARMED:		*(uint32_t*)value = (uint32_t)autopilot_info.armed_flag; break;
+		case AUTOPILOT_ROLL:		*(float*)value = autopilot_info.roll; break;
+		case AUTOPILOT_PITCH:		*(float*)value = autopilot_info.pitch; break;
 		default: return CFG_ERROR_VARID;
 	}
 	return CFG_ERROR_NONE;

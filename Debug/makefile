@@ -21,6 +21,7 @@ RM := rm -rf
 -include Core/Src/rc/subdir.mk
 -include Core/Src/motor/subdir.mk
 -include Core/Src/modem/subdir.mk
+-include Core/Src/leds/subdir.mk
 -include Core/Src/crc/subdir.mk
 -include Core/Src/configurator/subdir.mk
 -include Core/Src/battery/subdir.mk

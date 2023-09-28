@@ -17,7 +17,7 @@
 #include "system.h"
 #include "main.h"
 #include "../../config.h"
-//#include "../leds/leds_interface.h"
+#include "../leds/leds_interface.h"
 #include "../modem/modem_interface.h"
 #include "../configurator/cfg_interface.h"
 #include "../motor/motor_interface.h"
@@ -44,7 +44,7 @@ void system_ErrorHandler();
 void system_Timer(uint32_t res)
 {
 	system_time_counter += res;
-	//leds_Timer(res);
+	leds_Timer(res);
 	cfg_Timer(res);
 	modem_Timer(res);
 	servo_Timer(res);
@@ -71,8 +71,7 @@ void system_Timer(uint32_t res)
 void system_Init()
 {
 	system_info.reset_req = 0;
-	//leds_InitTask();
-
+	leds_InitTask();
 	modem_InitTask();
 	servo_InitTask();
 	motor_InitTask();
@@ -84,6 +83,7 @@ void system_Init()
 	system_info.usb_rx_flag = 0;
 	HAL_UART_Receive_IT(&HAL_MODEM_UART, (uint8_t*)&cfg_uart_rx_data, 1);
 	HAL_ADC_Start_IT(&hadc1);
+	//leds_setBlink(LED_SIM_BLUE, 200, 1000, 0, 0, 1);
 }
 
 /**
@@ -95,7 +95,7 @@ void system_Task(void)
 {
 	uint32_t i;
 
-	//leds_Task();
+	leds_Task();
 	cfg_Task();
 	modem_Task();
 	motor_Task();

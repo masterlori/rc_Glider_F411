@@ -26,6 +26,7 @@ Core/Src/autopilot \
 Core/Src/battery \
 Core/Src/configurator \
 Core/Src/crc \
+Core/Src/leds \
 Core/Src \
 Core/Src/modem \
 Core/Src/motor \
