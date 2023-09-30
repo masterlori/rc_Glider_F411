@@ -68,6 +68,12 @@ uint16_t cfg_NodeFwVarSet(uint16_t varid, void *value);
 //Autopilot node
 #define	NODE_AUTOPILOT	103
 
+//Roll channel node
+#define	NODE_ROLLCH		10301
+
+//Pitch channel node
+#define	NODE_PITCHCH	10302
+
 
 
 /* @brief nodes parameters lists*/
@@ -93,7 +99,9 @@ cgf_nodeTypeDef cfg_NodeList[] =
 	{ NODE_RC, NODE_DEV, RC_VAR_NUM, cfg_NodeRcVarGet, cfg_NodeRcVarSet, cfg_NodeRcVarProp},
 	{ NODE_BAT, NODE_DEV, BAT_VAR_NUM, cfg_NodeBatVarGet, cfg_NodeBatVarSet, cfg_NodeBatVarProp},
 	{ NODE_SENS, NODE_DEV, SENS_VAR_NUM, cfg_NodeSensVarGet, cfg_NodeSensVarSet, cfg_NodeSensVarProp},
-	{ NODE_AUTOPILOT, NODE_MAIN, AUTOPILOT_VAR_NUM, cfg_NodeApVarGet, cfg_NodeApVarSet, cfg_NodeApVarProp}
+	{ NODE_AUTOPILOT, NODE_MAIN, AUTOPILOT_VAR_NUM, cfg_NodeApVarGet, cfg_NodeApVarSet, cfg_NodeApVarProp},
+	{ NODE_ROLLCH, NODE_AUTOPILOT, ROLLCH_VAR_NUM, cfg_NodeRollChVarGet, cfg_NodeRollChVarSet, cfg_NodeRollChVarProp},
+	{ NODE_PITCHCH, NODE_AUTOPILOT, PITCHCH_VAR_NUM, cfg_NodePitchChVarGet, cfg_NodePitchChVarSet, cfg_NodePitchChVarProp}
 };
 
 /* @brief get the name of the node */
@@ -113,6 +121,8 @@ uint16_t cfg_GetNodeName(uint16_t nodeid, char *name)
 		case NODE_BAT    	: str = "Battery"; break;
 		case NODE_SENS    	: str = "Sensors"; break;
 		case NODE_AUTOPILOT	: str = "Autopilot"; break;
+		case NODE_ROLLCH	: str = "Roll channel"; break;
+		case NODE_PITCHCH	: str = "Pitch channel"; break;
 		default:break;
 	}
 	if( name )

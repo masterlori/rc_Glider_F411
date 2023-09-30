@@ -86,6 +86,8 @@ void sens_InitTask()
 
 	//Init state
 	sens_info.state = 0;
+	HAL_Delay(1000);
+	sens_WriteByte(SENS_REG_PWR_MGMT_1, 0x80);
 
 	return;
 }
@@ -112,13 +114,22 @@ void sens_Task(void)
 		sens_info.state = 1;
 		leds_setBlink(LED_SIM_BLUE, 50, 1000, 0, 0, 1);
 	}
-	//Init
+	//Wait
 	else if( sens_info.state == 1 )
 	{
 		if( sens_info.timer[SENS_TMR_PROC] == 0 )
 		{
 			//Wake up
 			sens_WriteByte(SENS_REG_PWR_MGMT_1, 0x00);
+			sens_info.timer[SENS_TMR_PROC] = 1000;
+			sens_info.state = 2;
+		}
+	}
+	//Init
+	else if( sens_info.state == 2 )
+	{
+		if( sens_info.timer[SENS_TMR_PROC] == 0 )
+		{
 			//Gyroscope config: ±250°/с
 			sens_SetGyroRange(GYRO_RANGE_250DPS);
 			//Accelerometer config: ±2g
@@ -130,12 +141,12 @@ void sens_Task(void)
 			sens_info.gyro_x_bias = 0.0;
 			sens_info.gyro_y_bias = 0.0;
 			sens_info.gyro_z_bias = 0.0;
-			sens_info.state = 2;
+			sens_info.state = 3;
 			leds_setBlink(LED_SIM_BLUE, 50, 500, 0, 0, 1);
 		}
 	}
 	//Calibration
-	else if( sens_info.state == 2 )
+	else if( sens_info.state == 3 )
 	{
 		//Calibration steps
 		if( t_cal_step > 0 )
@@ -156,12 +167,12 @@ void sens_Task(void)
 			sens_info.timer[SENS_TMR_PROC] = 1;
 			//sens_SetGyroRange(GYRO_RANGE_1000DPS);
 			sens_SetAccelRange(ACCEL_RANGE_8G);
-			sens_info.state = 3;
+			sens_info.state = 4;
 			leds_setBlink(LED_SIM_BLUE, 50, 100, 0, 0, 1);
 		}
 	}
 	//Ready
-	else if( sens_info.state == 3 )
+	else if( sens_info.state == 4 )
 	{
 		if( sens_info.timer[SENS_TMR_PROC] == 0 )
 		{
@@ -178,8 +189,10 @@ void sens_CalibrateStep()
 {
     uint8_t buffer[6];
     int16_t gyroX, gyroY, gyroZ;
+    HAL_StatusTypeDef status;
 
-	HAL_I2C_Mem_Read(&hi2c1, SENS_I2C_ADDR, SENS_REG_GYRO_XOUT_H, I2C_MEMADD_SIZE_8BIT, buffer, 6, 1000);
+    status = sens_Read(SENS_REG_GYRO_XOUT_H, buffer, 6);
+	//HAL_I2C_Mem_Read(&hi2c1, SENS_I2C_ADDR, SENS_REG_GYRO_XOUT_H, I2C_MEMADD_SIZE_8BIT, buffer, 6, 1000);
 	gyroX = (int16_t)(buffer[0] << 8 | buffer[1]);
 	gyroY = (int16_t)(buffer[2] << 8 | buffer[3]);
 	gyroZ = (int16_t)(buffer[4] << 8 | buffer[5]);
@@ -271,7 +284,8 @@ HAL_StatusTypeDef sens_UpdData()
 
 void sens_WriteByte(uint8_t reg, uint8_t data)
 {
-    HAL_I2C_Mem_Write(&HAL_MEMS_I2C, SENS_I2C_ADDR, reg, I2C_MEMADD_SIZE_8BIT, &data, 1, 1000);
+	volatile HAL_StatusTypeDef status;
+	status = HAL_I2C_Mem_Write(&HAL_MEMS_I2C, SENS_I2C_ADDR, reg, I2C_MEMADD_SIZE_8BIT, &data, 1, 1000);
 
     return;
 }
