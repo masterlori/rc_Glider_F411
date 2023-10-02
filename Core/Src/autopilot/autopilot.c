@@ -100,6 +100,10 @@ void autopilot_InitTask()
 	_pitch_pid.Ki = 0.1f;
 	_pitch_pid.Kd = 0.01f;
 
+	//Offsets
+	autopilot_info.offset_roll = 0.0f;
+	autopilot_info.offset_pitch = 0.0f;
+
 	autopilot_states[AP_STATE_IDLE].start_func = NULL;
 	autopilot_states[AP_STATE_IDLE].main_func = autopilot_stateIdleMain;
 	autopilot_states[AP_STATE_IDLE].end_func = NULL;
@@ -489,8 +493,8 @@ void autopilot_UpdAngles()
 		float roll = atan2(sens_info.accel_y, sens_info.accel_z) * 180/M_PI;
 		float pitch = atan2(-sens_info.accel_x, sqrt(sens_info.accel_y * sens_info.accel_y + sens_info.accel_z * sens_info.accel_z)) * 180/M_PI;
 
-		autopilot_info.roll = autopilot_KalmanUpd(&_roll_filter, roll, sens_info.gyro_x, dt);
-		autopilot_info.pitch = autopilot_KalmanUpd(&_pitch_filter, pitch, sens_info.gyro_y, dt);
+		autopilot_info.roll = autopilot_KalmanUpd(&_roll_filter, roll, sens_info.gyro_x, dt) + autopilot_info.offset_roll;
+		autopilot_info.pitch = autopilot_KalmanUpd(&_pitch_filter, pitch, sens_info.gyro_y, dt) + autopilot_info.offset_pitch;
 	}
 	return;
 }
@@ -564,24 +568,28 @@ uint16_t cfg_NodeApVarProp(uint16_t varid, char *name, uint16_t *prop)
 
 	switch( varid )
 	{
-		case AUTOPILOT_STATE:		str = "State"; break;
-		case AUTOPILOT_ARMED:		str = "Armed"; break;
-		case AUTOPILOT_ROLL:		str = "Roll"; break;
-		case AUTOPILOT_PITCH:		str = "Pitch"; break;
-		case AUTOPILOT_TAR_ROLL:	str = "Target roll"; break;
-		case AUTOPILOT_TAR_PITCH:	str = "Target pitch"; break;
+		case AUTOPILOT_STATE:			str = "State"; break;
+		case AUTOPILOT_ARMED:			str = "Armed"; break;
+		case AUTOPILOT_ROLL:			str = "Roll"; break;
+		case AUTOPILOT_OFFSET_ROLL:		str = "Roll offset"; break;
+		case AUTOPILOT_PITCH:			str = "Pitch"; break;
+		case AUTOPILOT_OFFSET_PITCH:	str = "Pitch offset"; break;
+		case AUTOPILOT_TAR_ROLL:		str = "Target roll"; break;
+		case AUTOPILOT_TAR_PITCH:		str = "Target pitch"; break;
 		default: return CFG_ERROR_VARID;
 	}
 	if( name ) { while( *str ) *name++ = *str++; *name = 0; }
 
 	if( prop ) switch( varid )
 	{
-		case AUTOPILOT_STATE:		*prop = CFG_VAR_TYPE_UINT; break;
-		case AUTOPILOT_ARMED:		*prop = CFG_VAR_TYPE_BOOL; break;
-		case AUTOPILOT_ROLL:		*prop = CFG_VAR_TYPE_REAL | CFG_VAR_PROP_READONLY; break;
-		case AUTOPILOT_PITCH:		*prop = CFG_VAR_TYPE_REAL | CFG_VAR_PROP_READONLY; break;
-		case AUTOPILOT_TAR_ROLL:	*prop = CFG_VAR_TYPE_REAL; break;
-		case AUTOPILOT_TAR_PITCH:	*prop = CFG_VAR_TYPE_REAL; break;
+		case AUTOPILOT_STATE:			*prop = CFG_VAR_TYPE_UINT; break;
+		case AUTOPILOT_ARMED:			*prop = CFG_VAR_TYPE_BOOL; break;
+		case AUTOPILOT_ROLL:			*prop = CFG_VAR_TYPE_REAL | CFG_VAR_PROP_READONLY; break;
+		case AUTOPILOT_OFFSET_ROLL:		*prop = CFG_VAR_TYPE_REAL | CFG_VAR_PROP_CONST; break;
+		case AUTOPILOT_PITCH:			*prop = CFG_VAR_TYPE_REAL | CFG_VAR_PROP_READONLY; break;
+		case AUTOPILOT_OFFSET_PITCH:	*prop = CFG_VAR_TYPE_REAL | CFG_VAR_PROP_CONST; break;
+		case AUTOPILOT_TAR_ROLL:		*prop = CFG_VAR_TYPE_REAL; break;
+		case AUTOPILOT_TAR_PITCH:		*prop = CFG_VAR_TYPE_REAL; break;
 		default: return CFG_ERROR_VARID;
 	}
 	return CFG_ERROR_NONE;
@@ -591,12 +599,14 @@ uint16_t cfg_NodeApVarGet(uint16_t varid, void *value)
 {
 	if( value ) switch( varid )
 	{
-		case AUTOPILOT_STATE:		*(uint32_t*)value = (uint32_t)autopilot_info.state; break;
-		case AUTOPILOT_ARMED:		*(uint32_t*)value = (uint32_t)autopilot_info.armed_flag; break;
-		case AUTOPILOT_ROLL:		*(float*)value = autopilot_info.roll; break;
-		case AUTOPILOT_PITCH:		*(float*)value = autopilot_info.pitch; break;
-		case AUTOPILOT_TAR_ROLL:	*(float*)value = autopilot_info.tar_roll; break;
-		case AUTOPILOT_TAR_PITCH:	*(float*)value = autopilot_info.tar_pitch; break;
+		case AUTOPILOT_STATE:			*(uint32_t*)value = (uint32_t)autopilot_info.state; break;
+		case AUTOPILOT_ARMED:			*(uint32_t*)value = (uint32_t)autopilot_info.armed_flag; break;
+		case AUTOPILOT_ROLL:			*(float*)value = autopilot_info.roll; break;
+		case AUTOPILOT_OFFSET_ROLL:		*(float*)value = autopilot_info.offset_roll; break;
+		case AUTOPILOT_PITCH:			*(float*)value = autopilot_info.pitch; break;
+		case AUTOPILOT_OFFSET_PITCH:	*(float*)value = autopilot_info.offset_pitch; break;
+		case AUTOPILOT_TAR_ROLL:		*(float*)value = autopilot_info.tar_roll; break;
+		case AUTOPILOT_TAR_PITCH:		*(float*)value = autopilot_info.tar_pitch; break;
 		default: return CFG_ERROR_VARID;
 	}
 	return CFG_ERROR_NONE;
@@ -606,10 +616,12 @@ uint16_t cfg_NodeApVarSet(uint16_t varid, void *value)
 {
 	if( value ) switch( varid )
 	{
-		case AUTOPILOT_STATE:		autopilot_info.state = (uint8_t)*(uint32_t*)value; break;
-		case AUTOPILOT_ARMED:		autopilot_info.armed_flag = (uint8_t)*(uint32_t*)value; break;
-		case AUTOPILOT_TAR_ROLL:	autopilot_info.tar_roll = *(float*)value; break;
-		case AUTOPILOT_TAR_PITCH:	autopilot_info.tar_pitch = *(float*)value; break;
+		case AUTOPILOT_STATE:			autopilot_info.state = (uint8_t)*(uint32_t*)value; break;
+		case AUTOPILOT_ARMED:			autopilot_info.armed_flag = (uint8_t)*(uint32_t*)value; break;
+		case AUTOPILOT_OFFSET_ROLL:		autopilot_info.offset_roll = *(float*)value; break;
+		case AUTOPILOT_OFFSET_PITCH:	autopilot_info.offset_pitch = *(float*)value; break;
+		case AUTOPILOT_TAR_ROLL:		autopilot_info.tar_roll = *(float*)value; break;
+		case AUTOPILOT_TAR_PITCH:		autopilot_info.tar_pitch = *(float*)value; break;
 		default: return CFG_ERROR_VARID;
 	}
 	return CFG_ERROR_NONE;

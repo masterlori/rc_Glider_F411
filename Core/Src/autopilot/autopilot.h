@@ -32,7 +32,9 @@ typedef struct __autopilot_infoTypeDef{
 	int8_t astart_elevator_val;
 	uint8_t astart_motor_val;
 	float roll;
+	float offset_roll;
 	float pitch;
+	float offset_pitch;
 	float tar_roll;
 	float tar_pitch;
 	uint8_t error_flag;
@@ -71,7 +73,9 @@ enum
 	AUTOPILOT_STATE,
 	AUTOPILOT_ARMED,
 	AUTOPILOT_ROLL,
+	AUTOPILOT_OFFSET_ROLL,
 	AUTOPILOT_PITCH,
+	AUTOPILOT_OFFSET_PITCH,
 	AUTOPILOT_TAR_ROLL,
 	AUTOPILOT_TAR_PITCH,
 	AUTOPILOT_VAR_NUM,
